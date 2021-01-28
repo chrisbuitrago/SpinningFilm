@@ -1,0 +1,15 @@
+﻿@model SpinningFilm.Models.DiscType
+
+@{
+    ViewData["Title"] = "DiscTypeAdd";
+}
+
+@using (Html.BeginForm("DiscTypeAdd", "Home", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.DiscTypeId)
+    <div>Please add the name of the new disc type.</div>
+    @Html.TextBoxFor(model => model.Description, "", new { @class = "form-control" })
+    <input type="submit" value="Add" class="btn btn-success"/>
+}
+

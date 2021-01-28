@@ -1,0 +1,188 @@
+﻿@model SpinningFilm.ViewModels.MediaListViewModel
+
+@{
+    Layout = null;
+}
+
+@if (Model.Filter != null)
+{
+    @using (Html.BeginForm("MediaList", "Media", FormMethod.Post, new { id = "removeFilterForm" }))
+    {
+        <div class="row no-gutters">
+            @foreach (var item in Model.Filter.FilteredGenreId)
+            {
+                <div style="padding-right:5px">
+                    <div class="btn btn-light" onclick="removeFilter('genre_@item')">
+                        @Model.Genres.SingleOrDefault(g => g.GenreId == item).Name
+                        <i class="fa fa-times-circle"></i>
+                    </div>
+                </div>
+            }
+            @foreach (var item in Model.Filter.FilteredDiscTypeId)
+            {
+                <div class="col-sm-auto" style="padding-right:5px">
+                    <div class="btn btn-light" onclick="removeFilter('disc_@item')">
+                        @Model.DiscTypes.SingleOrDefault(g => g.DiscTypeId == item).Description
+                        <i class="fa fa-times-circle"></i>
+                    </div>
+                </div>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.Filter.SearchTerm))
+            {
+                <div class="col-sm-auto" style="padding-right:5px">
+                    <div class="btn btn-light" onclick="removeFilter('searchTermBtn')">
+                        @Model.Filter.SearchTerm
+                        <i class="fa fa-times-circle"></i>
+                    </div>
+                </div>
+            }
+            @if (Model.Filter.Watched)
+            {
+                <div style="padding-right:5px">
+                    <div class="btn btn-light" onclick="removeFilter('watched')">
+                        Watched
+                        <i class="fa fa-times-circle"></i>
+                    </div>
+                </div>
+            }
+            @if (Model.Filter.NotWatched)
+            {
+                <div style="padding-right:5px">
+                    <div class="btn btn-light" onclick="removeFilter('notWatched')">
+                        Not Watched
+                        <i class="fa fa-times-circle"></i>
+                    </div>
+                </div>
+            }
+            @if (Model.Filter.DigitalCopy)
+            {
+                <div style="padding-right:5px">
+                    <div class="btn btn-light" onclick="removeFilter('digitalCopy')">
+                        Digital Copy
+                        <i class="fa fa-times-circle"></i>
+                    </div>
+                </div>
+            }
+            @if (Model.Filter.NoDigitalCopy)
+            {
+                <div style="padding-right:5px">
+                    <div class="btn btn-light" onclick="removeFilter('noDigitalCopy')">
+                        No Digital Copy
+                        <i class="fa fa-times-circle"></i>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+}
+    <div class="row no-gutters">
+        <div class="col">
+            Total: <b>@Model.Media.Count()</b>
+        </div>
+    </div>
+    @foreach (var item in Model.Media)
+    {      
+        <div class="row no-gutters border bg-secondary shadow-sm ml-card">
+            <div class="col-sm-2">
+                <div class="media-tile-poster">
+                    <img src="@item.PosterOriginal" class="img-thumbnail-ml" />
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="media-title">@item.Title </div>
+                <div>@item.ReleaseDate.Year | @item.Rated @if (item.DigitalCopy) { <text>| <i class="fa fa-tv text-light-blue" title="You own the digital copy"></i></text> }</div>
+                <div><img src="~/img/imdb_logo.svg" width="45" /> - @item.ImdbRating | <img src="~/img/metacritic_logo.svg" width="25" /> - @item.Metascore</div>
+                <div id="watched-@item.ImdbId">
+                    Watched: @item.WatchedList.Count time(s) 
+                    @if(item.WatchedList.Count > 0)
+                    {
+                        <text>| Last Watched: @item.LastWatched</text>
+                    }
+                </div>
+                <div class="text-truncate text-wrap">@item.PlotTruncated</div>
+            </div>
+            <div class="col-sm-2" style="padding-left:1.4rem">
+                <div class="row">
+                    <div class="col">
+                        <div class="media-tile-format">
+                            <img src="@item.DiscType.DiscTypeLogoLink" class="img-thumbnail" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="padding-top:5px">
+                    <div class="col">
+                        <button title="Add the date you last watched this" data-arg1="@item.ImdbId" data-arg2="@item.Title" class="btn btn-outline-light btn-media-watched">
+                            <i class="fa fa-eye"></i>
+                        </button>
+                        <button title="Get more information" data-arg1="@item.ImdbId" class="btn btn-outline-light btn-media-info">
+                            <i class="fa fa-question"></i>
+                        </button>
+                        <button title="Delete from your list" data-arg1="@item.ImdbId" class="btn btn-danger btn-media-delete">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="row" style="padding-top:5px">
+                    <div class="col">
+                        <button title="Edit" type="button" data-arg1="@item.ImdbId" data-arg2="@item.Title" class="btn btn-outline-light btn-media-edit">
+                            <i class="fa fa-edit"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    <div id="watchedTest"></div>
+
+    @using (Html.BeginForm("MediaDelete", "Media", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.Hidden("imdbId", null, new { id = "imdbId" })
+        @Html.Hidden("type", Model.MediaType)
+        <div id="deleteModal" class="modal fade">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-body p-t-0">
+                        <div class="text-pomegranate f-b">
+                            <h3>Are you sure you want to delete this movie?</h3><br />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div id="cancel" class="btn btn-light">Cancel</div>
+                        <input id="deleteButton" type="submit" value="Delete" class="btn btn-danger p-a-5" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <script>
+        $(".btn-media-watched").click(function () {
+            var id = $(this).attr("data-arg1");
+            var title = $(this).attr("data-arg2");
+            $("#modalPlaceholder").load("/Media/WatchedModal/", { ImdbId: id, Title: title, MediaType: "@Model.MediaType" });
+        });
+
+        $(".btn-media-info").click(function () {
+            var id = $(this).attr("data-arg1");
+            $("#modalPlaceholder").load("/Media/InfoModal/", { imdbId: id });
+        });
+
+        $(".btn-media-delete").click(function () {
+            $("#imdbId").attr("value", $(this).attr("data-arg1"));
+            $("#deleteModal").modal("show");
+        });
+
+        $(".btn-media-edit").click(function () {
+            var id = $(this).attr("data-arg1");
+            $("#modalPlaceholder").load("/Media/EditModal/", { imdbId: id });
+        });
+
+        $(".close").click(function () {
+            $("#deleteModal").modal("hide");
+        });
+
+        $("#cancel").click(function () {
+            $("#deleteModal").modal("hide");
+        });
+    </script>

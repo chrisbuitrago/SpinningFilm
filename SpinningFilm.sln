@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30717.126
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpinningFilm", "SpinningFilm\SpinningFilm.csproj", "{17245FC9-9D18-48F2-8E93-2D4014B83C64}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{17245FC9-9D18-48F2-8E93-2D4014B83C64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17245FC9-9D18-48F2-8E93-2D4014B83C64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17245FC9-9D18-48F2-8E93-2D4014B83C64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17245FC9-9D18-48F2-8E93-2D4014B83C64}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1886A65B-CD51-4BA2-BF86-3CBA3F100CD1}
+	EndGlobalSection
+EndGlobal

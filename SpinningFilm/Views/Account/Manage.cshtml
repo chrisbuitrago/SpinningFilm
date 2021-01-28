@@ -1,0 +1,76 @@
+﻿@model SpinningFilm.Models.MediaUser
+
+@{
+    ViewData["Title"] = "Manage";
+}
+
+    <div class="text-dark h4">        
+        <div class="row mb-2">
+            <div class="col-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="border-bottom">Email</div>
+                        <div>@Model.Email</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="border-bottom">First name</div>
+                        <div>@Model.FirstName</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="border-bottom">Last name</div>
+                        <div>@Model.LastName</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="h4">
+        <div class="row mb-2">
+            <div class="col-2">
+                Email:
+            </div>
+            <div class="col-10">
+                @Model.Email
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-2">
+                First name:
+            </div>
+            <div class="col-10">
+                @Model.FirstName
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-2">
+                Last name:
+            </div>
+            <div class="col-10">
+                @Model.LastName
+            </div>
+        </div>
+    </div>
+
+<div class="h4">
+    Email: <b>@Model.Email</b>
+</div>
+<div class="h4">
+    First name: <b>@Model.FirstName</b>
+</div>
+<div class="h4">
+    Last name: <b>@Model.LastName</b>
+</div>
+

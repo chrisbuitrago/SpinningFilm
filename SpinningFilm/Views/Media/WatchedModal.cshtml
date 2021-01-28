@@ -1,0 +1,60 @@
+﻿@model SpinningFilm.ViewModels.WatchedViewModel
+
+@{
+    Layout = null;
+}
+
+<div id="addWatchedModal" class="modal fade">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button class="close">X</button>
+                @using (Html.BeginForm("WatchedAdd", "Media", FormMethod.Post, new { id = "watchedForm" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(model => model.ImdbId)
+                    @Html.HiddenFor(model => model.MediaType)
+                    <div style="font-size:20px">
+                        When did you watch <b>@Model.Title?</b> 
+                    </div>    
+                    <div>
+                        @Html.TextBoxFor(model => model.Date, "", new { @class = "form-control bg-white" })
+                    </div>
+                    <div style="padding-top:10px">
+                        <input type="submit" value="Submit" class="btn btn-primary" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#Date").flatpickr({
+        defaultDate: "today",
+        dateFormat: "m/d/Y"
+    });
+
+    $("#addWatchedModal").modal("show");
+
+    $(".close").click(function () {
+        $("#addWatchedModal").modal("hide");
+    });
+    
+    $("#watchedForm").submit(function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: $("#watchedForm").attr("action"),
+            type: "POST",
+            data: $("#watchedForm").serialize(),
+            success: function (result) {
+                $("#watched-"+result.imdbId).text("Watched: " + result.count + " time(s) | Last Watched: " + result.lastWatched);
+                $("#addWatchedModal").modal("hide");
+            },
+            error: function () {
+                alert("There was an error during the process, and you're changes may not have saved. Please refresh the page to verify if your changes were saved.");
+            }
+        });
+    });
+</script>
+

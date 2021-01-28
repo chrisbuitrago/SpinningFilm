@@ -1,0 +1,52 @@
+﻿@model SpinningFilm.ViewModels.AddMediaModalViewModel
+
+@{
+    Layout = null;
+}
+
+<div id="addMovieModal" class="modal fade">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button class="close">X</button>
+                <div class="text-center" style="font-size:24px">
+                    <div>
+                        <img src="@Model.Poster" />
+                    </div>
+                </div>
+                @using (Html.BeginForm("AddMovie", "Search", FormMethod.Post, new { id = "addMovieForm" }))
+                {
+                    @Html.HiddenFor(model => model.TmdbId)
+                    @Html.HiddenFor(model => model.Type)
+                    <div>
+                        What type of disc is this? @Html.DropDownList("DiscType", Model.DiscTypeList(), "", new { @class = "form-control required" })
+                    </div>
+                    <div>
+                        Did this include a digital copy? @Html.DropDownList("DigitalCopy", new List<SelectListItem> { new SelectListItem { Text = "Yes", Value = "True" }, new SelectListItem { Text = "No", Value = "False" } }, "", new { @class = "form-control required" })
+                    </div>
+                    <div>
+                        Select any extra genres you want to attach to this movie:
+                        <div>
+                            <input type="checkbox" name="extragenres" value="Halloween" /> Halloween
+                        </div>
+                        <div>
+                            <input type="checkbox" name="extragenres" value="Christmas" /> Christmas
+                        </div>
+                    </div>
+                    <div>
+                        <input type="submit" value="Submit" class="btn btn-success" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#addMovieForm").validate();
+    $("#addMovieModal").modal("show");
+    $(".close").click(function () {
+        $("#addMovieModal").modal("hide");
+    });
+</script>
+

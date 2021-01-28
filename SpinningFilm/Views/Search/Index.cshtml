@@ -1,0 +1,88 @@
+﻿@model SpinningFilm.ApiModels.TmdbResult
+
+@{
+    ViewData["Title"] = "Search";
+}
+
+@using (Html.BeginForm())
+{
+    <div class="form-row">    
+        <div class="col-11">
+            @Html.TextBox("term", null, new { @class = "form-control", placeholder = "Search by Title..." })
+        </div>
+
+        <div class="col-1">
+            <button type="submit" class="btn btn-outline-light">
+                <i class="fa fa-search-plus"></i>
+            </button>
+        </div>
+    </div>
+}
+
+@if (Model != null)
+{
+    <h1>Results</h1>
+    <table class="table table-bordered font bg-secondary text-light">
+        <thead>
+            <tr>
+                <th width="15%">Title</th>
+                <th width="6%">Year</th>
+                <th width="6%">Type</th>
+                <th width="67%">Overview</th>
+                <th width="6%"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Results)
+            {
+
+                <tr>
+                    <td>@item.Title</td>
+                    <td>@item.Year</td>
+                    <td>@item.Type</td>
+                    <td>
+                        @item.Overview
+                    </td>
+                    <td>
+                        <button data-arg1="@item.Id" data-arg2="@item.Type" data-arg3="@item.PosterPath" data-arg4="@item.Title" class="btn btn-success addMedia">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div id="modalPlaceholder"></div>
+    <script>
+        var searchResults = @Html.Raw(Json.Serialize(Model.Results));
+        $(".addMedia").click(function () {
+            $("#modalPlaceholder").load("/Search/AddMediaModal/", { TmdbId: $(this).attr("data-arg1"), Type: $(this).attr("data-arg2"), Poster: $(this).attr("data-arg3"), Title: $(this).attr("data-arg4") });
+            //var id = $(this).attr("data-arg1");
+            //var title = "";
+            //var poster = "";
+            //var type = "";
+            //var year = "";
+            //var overview = "";
+            //var runtime = "";
+            //var release = "";
+            //var genres = [""];
+            //for (var i = 0; i < searchResults.length; i++) {
+            //    if (searchResults[i].id == id) {
+            //        title = searchResults[i].title;
+            //        poster = searchResults[i].poster;
+            //        type = searchResults[i].type;
+            //        year = searchResults[i].year;
+            //        overview = searchResults[i].overview;
+            //        runtime = searchResults[i].runtime;
+            //        release = searchResults[i].releaseDate;
+            //        genres = searchResults[i].genres;
+            //    }
+            //}
+
+            //$("#modalPlaceholder").load("/Search/AddMediaModal/", { TmdbId: id, Title: title, Poster: poster, Type: type, Year: year, ReleaseDate: release, PlotLong: overview, Runtime: runtime, Genre: genres });
+        });
+    </script>
+}
+
+

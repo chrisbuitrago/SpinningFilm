@@ -1,0 +1,59 @@
+﻿@model SpinningFilm.ViewModels.AddSeriesViewModel
+
+@{
+    Layout = null;
+}
+
+<div id="addSeriesModal" class="modal fade">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button class="close">X</button>
+                <div class="text-center">
+                    <img src="@Model.Poster" />
+                </div>
+                @using (Html.BeginForm("AddSeries", "Search", FormMethod.Post, new { id = "addSeriesForm" }))
+                {
+                    @Html.HiddenFor(model => model.TmdbId)
+                    @Html.HiddenFor(model => model.ImdbId)
+            <div>
+                <b>Which seasons do you own?</b>
+                @for (int i = 0; i < Model.NumberOfSeasons; i++)
+                {
+                    @Html.HiddenFor(model => model.Seasons[i].SeriesSeasonId)
+                    @Html.HiddenFor(model => model.Seasons[i].SeasonNumber)
+                    <div>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" name="SeasonNumbers" type="checkbox" value="@Model.Seasons[i].SeasonNumber" data-toggle="collapse" data-target="#options_@Model.Seasons[i].SeriesSeasonId"/>
+                                <span class="form-check-sign"></span>
+                                @Model.Seasons[i].SeasonNumber
+                            </label>
+                        </div>
+                        <div id="options_@Model.Seasons[i].SeriesSeasonId" class="collapse" style="padding-bottom:1.4rem">
+                            <div>
+                                What type of disc is this? @Html.DropDownListFor(model => model.Seasons[i].DiscTypeId, Model.DiscTypeList(), "", new { @class = "form-control required" })
+                            </div>
+                            <div>
+                                Did this include a digital copy? @Html.DropDownListFor(model => model.Seasons[i].DigitalCopy, new List<SelectListItem> { new SelectListItem { Text = "Yes", Value = "True" }, new SelectListItem { Text = "No", Value = "False" } }, "", new { @class = "form-control required" })
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+                    <div>
+                        <input type="submit" value="Submit" class="btn btn-success" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#addSeriesForm").validate();
+    $("#addSeriesModal").modal("show");
+    $(".close").click(function () {
+        $("#addSeriesModal").modal("hide");
+    });
+</script>

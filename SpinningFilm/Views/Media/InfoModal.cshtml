@@ -1,0 +1,92 @@
+﻿@model SpinningFilm.ViewModels.MediaInformationViewModel
+@{
+    Layout = null;
+}
+
+<div id="infoModal" class="modal fade">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button class="close">X</button>
+                <div class="row">
+                    <div class="col-4">
+                        <img src="@Model.Media.PosterMedium" class="img-thumbnail-ml" />
+                    </div>
+                    <div class="col-8">
+                        <div class="row">
+                            <div class="col media-info-title">@Model.Media.Title</div>
+                        </div>
+                        <div class="row">
+                            <div class="col f-b">
+                                @Model.Media.Rated | @Model.Media.Runtime min | @Model.Media.ReleaseDate.ToString("dd MMMM yyyy")
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <a href="@Model.Media.ImdbLink" target="_blank"><img src="~/img/imdb_logo.svg" width="45" /> - @Model.Media.ImdbRating</a> | <img src="~/img/metacritic_logo.svg" width="25" /> - @Model.Media.Metascore
+                            </div>
+                        </div>
+                        <div class="row" style="padding-top:5px;">
+                            <div class="col">
+                                @Model.Media.PlotLong
+                            </div>
+                        </div>
+                        <div class="row" style="padding-top:5px;">
+                            <div class="col-2 f-b">
+                                Genre(s):
+                            </div>
+                            <div class="col-10">
+                                @for (int i = 0; i < Model.MediaGenres.Count; i++)
+                                {
+                                    <text>@Model.MediaGenres[i].Genre.Name</text>
+                                    if (i != Model.MediaGenres.Count - 1)
+                                    {
+                                        <text>, </text>
+                                    }
+                                }
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-2 f-b">
+                                Cast:
+                            </div>
+                            <div class="col-10">
+                                @for (int i = 0; i < Model.Cast.Count; i++)
+                                {
+                                    <text>@Model.Cast[i].CastName</text>
+                                    if (i != Model.Cast.Count - 1)
+                                    {
+                                        <text>, </text>
+                                    }
+                                }
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-2 f-b">
+                                Director(s):
+                            </div>
+                            <div class="col-10">
+                                @for (int i = 0; i < Model.Crew.Count; i++)
+                                {
+                                    <text>@Model.Crew[i].CrewName</text>
+                                    if (i != Model.Crew.Count - 1)
+                                    {
+                                        <text>, </text>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>    
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#infoModal").modal("show");
+    $(".close").click(function () {
+            $("#infoModal").modal("hide");
+    });
+</script>
+

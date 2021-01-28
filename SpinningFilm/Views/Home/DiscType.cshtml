@@ -1,0 +1,27 @@
+﻿@model IEnumerable<SpinningFilm.Models.DiscType>
+
+@{
+    ViewData["Title"] = "DiscType";
+}
+
+<div style="padding-bottom:10px">
+    @Html.ActionLink("Add", "DiscTypeAdd", "Home", null, new { @class = "btn btn-primary" })
+</div>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var item in Model)
+        {
+            <tr>
+                <td>@item.DiscTypeId</td>
+                <td>@item.Description</td>
+            </tr>
+        }
+    </tbody>
+</table>

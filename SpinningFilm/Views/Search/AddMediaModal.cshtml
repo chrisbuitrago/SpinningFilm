@@ -1,0 +1,75 @@
+﻿@model SpinningFilm.ViewModels.AddMediaModalViewModel
+
+@{
+    Layout = null;
+}
+
+<div id="addMediaModal" class="modal fade">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button class="close">X</button>
+                <div class="text-center" style="font-size:24px">
+                    <div>
+                        <img src="@Model.Poster" />
+                    </div>
+                </div>
+                @using (Html.BeginForm("AddMedia", "Search", FormMethod.Post, new { id = "addMediaForm" }))
+                {
+                    @Html.HiddenFor(model => model.TmdbId)
+                    @Html.HiddenFor(model => model.ImdbId)
+                    @Html.HiddenFor(model => model.Title)
+                    @Html.HiddenFor(model => model.Type)
+                    @Html.HiddenFor(model => model.Poster)
+                    @Html.HiddenFor(model => model.Year)
+                    @for (int i = 0; i < Model.Genre.Count; i++)
+                    {
+                        @Html.HiddenFor(model => model.Genre[i])
+                    }
+                    <div>
+                        What type of disc is this? @Html.DropDownList("DiscType", Model.DiscTypeList(), "", new { @class = "form-control required" })
+                    </div>
+                    @if (Model.Type.Equals("tv"))
+                    {
+                        <div>
+                            Which seasons do you own?
+                            @for (int i = 1; i <= Model.NumberOfSeaons; i++)
+                            {
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" name="FilteredGenreId" type="checkbox" value="@i" />
+                                        <span class="form-check-sign"></span>
+                                        @i
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    }
+                    <div>
+                        Did this include a digital copy? @Html.DropDownList("DigitalCopy", new List<SelectListItem> { new SelectListItem { Text = "Yes", Value = "True" }, new SelectListItem { Text = "No", Value = "False" } }, "", new { @class = "form-control required" })
+                    </div>
+                    <div>
+                        Does this fall under any extra genres?
+                        <div>
+                            <input type="checkbox" name="extragenres" value="Halloween" /> Halloween
+                        </div>
+                        <div>
+                            <input type="checkbox" name="extragenres" value="Christmas" /> Christmas
+                        </div>
+                    </div>
+                    <div>
+                        <input type="submit" value="Submit" class="btn btn-success" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#addMediaForm").validate();
+    $("#addMediaModal").modal("show");
+    $(".close").click(function () {
+            $("#addMediaModal").modal("hide");
+    });
+</script>

@@ -1,0 +1,51 @@
+﻿@model SpinningFilm.ViewModels.EditMediaViewModel
+
+@{
+    Layout = null;
+}
+
+<div id="editMediaModal" class="modal fade">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button class="close">X</button>
+                <div class="text-center" style="font-size:24px">
+                    <div>
+                        <img src="@Model.Poster" />
+                    </div>
+                </div>
+                @using (Html.BeginForm("EditMedia", "Media", FormMethod.Post, new { id = "editMediaForm" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(model => model.ImdbId)
+                    <div>
+                        What type of disc is this? @Html.DropDownList("DiscType", Model.DiscTypeList(), "", new { @class = "form-control required" })
+                    </div>
+                    <div>
+                        Did this include a digital copy? @Html.DropDownList("DigitalCopy", new List<SelectListItem> { new SelectListItem { Text = "Yes", Value = "True" }, new SelectListItem { Text = "No", Value = "False" } }, "", new { @class = "form-control required" })
+                    </div>
+                    <div>
+                        Does this fall under any extra genres?
+                        <div>
+                            <input type="checkbox" name="extragenres" value="Halloween" @Html.Raw(Model.ExtraGenres.Contains("Halloween") ? "checked" : null) /> Halloween
+                        </div>
+                        <div>
+                            <input type="checkbox" name="extragenres" value="Christmas" @Html.Raw(Model.ExtraGenres.Contains("Christmas") ? "checked" : null) /> Christmas
+                        </div>
+                    </div>
+                    <div>
+                        <input type="submit" value="Submit" class="btn btn-success" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#editMediaForm").validate();
+    $("#editMediaModal").modal("show");
+    $(".close").click(function () {
+            $("#editMediaModal").modal("hide");
+    });
+</script>

@@ -1,0 +1,178 @@
+﻿@model SpinningFilm.ViewModels.MediaListViewModel
+
+@{
+    ViewData["Title"] = "My Movies";
+}
+
+<div class="">
+    <div class="row no-gutters">
+        <div class="col-sm-2">
+            @using (Html.BeginForm("MediaList", "Media", FormMethod.Post, new { @id = "filterForm" }))
+            {
+                @Html.HiddenFor(model => model.MediaType)
+                <div style="padding:0px 5px 5px 0px">
+                    @Html.DropDownList("OrderBy", new List<SelectListItem> { new SelectListItem { Text = "A - Z", Value = "0", Selected = true }, new SelectListItem { Text = "Release Date", Value = "1" } }, new { @class = "form-control" })
+                </div>
+                <div class="btn btn-outline-light" data-toggle="collapse" data-target="#filterCollapse">
+                    <i class="fa fa-plus"></i>
+                    Filters
+                </div>
+                <div id="filterCollapse" class="collapse" style="padding-top:5px; padding-right:5px">
+                    <div class="border-top" style="padding: 5px 0px 0px 0px">
+
+                        <button type="button" class="btn btn-outline-light" data-toggle="collapse" data-target="#genreCollapse">
+                            Genre
+                            <i class="fa fa-chevron-down"></i>
+                        </button>
+                        <div class="collapse" id="genreCollapse">
+                            @foreach (var item in Model.Genres)
+                            {
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" id="genre_@item.GenreId" name="FilteredGenreId" type="checkbox" value="@item.GenreId" />
+                                        <span class="form-check-sign"></span>
+                                        @item.Name
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div style="padding-top:5px">
+                        <button type="button" class="btn btn-outline-light" data-toggle="collapse" data-target="#discCollapse">
+                            Disc Type
+                            <i class="fa fa-chevron-down"></i>
+                        </button>
+                        <div class="collapse" id="discCollapse">
+                            @foreach (var item in Model.DiscTypes)
+                            {
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" id="disc_@item.DiscTypeId" name="FilteredDiscTypeId" type="checkbox" value="@item.DiscTypeId" />
+                                        <span class="form-check-sign"></span>
+                                        @item.Description
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div style="padding-top:5px">
+                        <button type="button" class="btn btn-outline-light" data-toggle="collapse" data-target="#watchedCollapse">
+                            Watched
+                            <i class="fa fa-chevron-down"></i>
+                        </button>
+                    </div>
+                    <div class="collapse" id="watchedCollapse">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" id="watched" name="Watched" type="checkbox" value="True" />
+                                <span class="form-check-sign"></span>
+                                Watched
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" id="notWatched" name="NotWatched" type="checkbox" value="True" />
+                                <span class="form-check-sign"></span>
+                                Not Watched
+                            </label>
+                        </div>
+                    </div>
+                    <div style="padding-top:5px">
+                        <button type="button" class="btn btn-outline-light" data-toggle="collapse" data-target="#digitalCopyCollapse">
+                            Digital Copy
+                            <i class="fa fa-chevron-down"></i>
+                        </button>
+                    </div>
+                    <div class="collapse" id="digitalCopyCollapse">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" id="digitalCopy" name="DigitalCopy" type="checkbox" value="True" />
+                                <span class="form-check-sign"></span>
+                                Digital Copy
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" id="noDigitalCopy" name="NoDigitalCopy" type="checkbox" value="True" />
+                                <span class="form-check-sign"></span>
+                                No Digital Copy
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="col-sm-8">
+            @using (Html.BeginForm("MediaList", "Media", FormMethod.Post, new { @id = "searchForm" }))
+            {
+                <div class="form-row">
+                    @*<div class="col-12">
+                        @Html.TextBox("SearchTerm", null, null, new { @class = "form-control" })
+                        <input type="submit" value="Search" class="btn btn-outline-light" />
+                    </div>*@
+                    <div class="col-11">
+                        @Html.TextBox("SearchTerm", null, null, new { @class = "form-control", placeholder = "Search Title..." })
+                    </div>
+                    <div class="col-1">
+                        <button type="submit" class="btn btn-outline-light">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            }
+            <div class="row no-gutters" style="padding-top:10px">               
+                <div id="mediaList" class="col">
+                    @{ await Html.RenderPartialAsync("MediaList", Model); }
+                </div>
+                @*@await Component.InvokeAsync("SpinningFilm", new { Model.Media })*@
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalPlaceholder">
+</div>
+
+<script>
+    $("#searchForm").submit(function (e) {
+        e.preventDefault();
+        $("#mediaList").load($("#searchForm").attr("action"), $("#searchForm").serialize() + "&" + $("#filterForm").serialize());
+    });
+
+    $("#OrderBy").change(function () {
+        $("#mediaList").load($("#filterForm").attr("action"), $("#searchForm").serialize() + "&" + $("#filterForm").serialize());
+    });
+
+    $("input[name='FilteredGenreId']").change(function () {
+        $("#mediaList").load($("#filterForm").attr("action"), $("#searchForm").serialize() + "&" + $("#filterForm").serialize());
+    });
+
+    $("input[name='FilteredDiscTypeId']").change(function () {
+        $("#mediaList").load($("#filterForm").attr("action"), $("#searchForm").serialize() + "&" + $("#filterForm").serialize());
+    });
+
+    $("input[name='Watched']").change(function () {
+        $("#mediaList").load($("#filterForm").attr("action"), $("#searchForm").serialize() + "&" + $("#filterForm").serialize());
+    });
+
+    $("input[name='NotWatched']").change(function () {
+        $("#mediaList").load($("#filterForm").attr("action"), $("#searchForm").serialize() + "&" + $("#filterForm").serialize());
+    });
+
+    $("input[name='DigitalCopy']").change(function () {
+        $("#mediaList").load($("#filterForm").attr("action"), $("#searchForm").serialize() + "&" + $("#filterForm").serialize());
+    });
+
+    $("input[name='NoDigitalCopy']").change(function () {
+        $("#mediaList").load($("#filterForm").attr("action"), $("#searchForm").serialize() + "&" + $("#filterForm").serialize());
+    });
+
+    function removeFilter(id) {
+        if (id == "searchTermBtn") {
+            $("#SearchTerm").val("");
+        } else {
+            $("#" + id).prop("checked", false);
+        }
+        $("#mediaList").load($("#filterForm").attr("action"), $("#searchForm").serialize() + "&" + $("#filterForm").serialize());
+    }
+</script>
