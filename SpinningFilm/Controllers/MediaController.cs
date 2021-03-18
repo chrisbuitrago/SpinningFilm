@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using SpinningFilm.Extensions;
 using SpinningFilm.Interfaces;
+using SpinningFilm.Helpers;
+using SpinningFilm.Auth;
 
 namespace SpinningFilm.Controllers
 {
@@ -18,19 +20,34 @@ namespace SpinningFilm.Controllers
     public class MediaController : Controller
     {
         private readonly SpinningFilmContext _context;
-        private IApiService _apiService;
-        private IMediaListViewModelService _mediaListViewModelService;
+        private readonly IApiService _apiService;
+        private readonly IMediaListViewModelService _mediaListViewModelService;
+        private readonly IPhysicalMediaService _physicalMediaService;
+        private readonly IMediaInformationViewModelService _mediaInformationViewModelService;
+        private readonly IWatchedViewModelService _watchedViewModelService;
+        private readonly IEditMediaViewModelService _editMediaViewModelService;
+        private readonly IAuthorizationService _authorizationService;
 
-        public MediaController(SpinningFilmContext context, IApiService apiService, IMediaListViewModelService mediaListViewModelService)
+        public MediaController(SpinningFilmContext context, IApiService apiService, IMediaListViewModelService mediaListViewModelService,
+            IPhysicalMediaService physicalMediaService,
+            IMediaInformationViewModelService mediaInformationViewModelService,
+            IWatchedViewModelService watchedViewModelService,
+            IEditMediaViewModelService editMediaViewModelService,
+            IAuthorizationService authorizationService)
         {
             _context = context;
             _apiService = apiService;
             _mediaListViewModelService = mediaListViewModelService;
+            _physicalMediaService = physicalMediaService;
+            _mediaInformationViewModelService = mediaInformationViewModelService;
+            _watchedViewModelService = watchedViewModelService;
+            _editMediaViewModelService = editMediaViewModelService;
+            _authorizationService = authorizationService;
         }
         
         public async Task<IActionResult> Index(MediaFilter filter)
         {
-            filter.UserId = User.Identity.NameId();
+            filter.UserId = User.Identity.GetNameIdGuid();
             MediaListViewModel mediaList = await _mediaListViewModelService.CreateViewModel(filter);
 
             return View(mediaList);
@@ -38,38 +55,25 @@ namespace SpinningFilm.Controllers
 
         public async Task<IActionResult> MediaList(MediaFilter filter)
         {
-            filter.UserId = User.Identity.NameId();
+            filter.UserId = User.Identity.GetNameIdGuid();
             MediaListViewModel mediaList = await _mediaListViewModelService.CreateViewModel(filter);
 
             return View(mediaList);
         }
 
-        public IActionResult MediaDelete(string imdbId, string type)
+        public async Task<IActionResult> MediaDelete(Guid physicalMediaId)
         {
-            Movie media = _context.Movies.SingleOrDefault(m => m.MediaUserId == User.Identity.NameId() && m.ImdbId == imdbId);
-            _context.Remove(media);
-            List<Watched> watched = _context.Watched.Where(m => m.ImdbId == imdbId).ToList();
-            foreach (var item in watched)
+            PhysicalMedia physicalMedia = await _physicalMediaService.Get(physicalMediaId);
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, physicalMedia, new SameUserRequirement());
+
+            if (!authorizationResult.Succeeded)
             {
-                _context.Remove(item);
+                return new ForbidResult();
             }
-            List<MediaGenre> mediaGenres = _context.MediaGenres.Where(m => m.ImdbId == imdbId).ToList();
-            foreach (var item in mediaGenres)
-            {
-                _context.Remove(item);
-            }
-            List<Cast> cast = _context.Casts.Where(c => c.ImdbId == imdbId).ToList();
-            foreach(var item in cast)
-            {
-                _context.Remove(item);
-            }
-            List<Crew> crew = _context.Crews.Where(c => c.ImdbId == imdbId).ToList();
-            foreach (var item in crew)
-            {
-                _context.Remove(item);
-            }
-            _context.SaveChanges();
-            return RedirectToAction("Index", new { type });
+
+            await _physicalMediaService.Delete(physicalMedia);
+            return RedirectToAction("Index", new { type = SpinningFilmHelper.MovieType });
         }
 
         public IActionResult WatchedModal(WatchedViewModel watched)
@@ -79,71 +83,87 @@ namespace SpinningFilm.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public JsonResult WatchedAdd(WatchedViewModel watched)
+        public async Task<IActionResult> WatchedAdd(WatchedViewModel watched)
         {
-            Movie media = _context.Movies.SingleOrDefault(m => m.MediaUserId == User.Identity.NameId() && m.ImdbId == watched.ImdbId);
-            media.Watched = true;
-            _context.Update(media);
-            _context.Add(new Watched(watched));
-            _context.SaveChanges();
-            List<Watched> watchedList = _context.Watched.Where(w => w.ImdbId == watched.ImdbId).ToList();
-            watched.Count = watchedList.Count();
-            watched.LastWatched = watchedList.Max(w => w.Date).ToString("MM/dd/yyyy");
-            JsonResult result = Json(watched);
-            return result;
+            PhysicalMedia physicalMedia = await _physicalMediaService.Get(watched.PhysicalMediaId);
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, physicalMedia, new SameUserRequirement());
+
+            if (!authorizationResult.Succeeded)
+            {
+                return new ForbidResult();
+            }
+
+            var result = await _watchedViewModelService.AddWatched(physicalMedia, watched.Date);
+            return Json(result);
         }
 
-        public IActionResult InfoModal(string imdbId)
+        public async Task<IActionResult> InfoModal(Guid physicalMediaId)
         {
-            Movie media = _context.Movies.SingleOrDefault(m => m.MediaUserId == User.Identity.NameId() && m.ImdbId == imdbId);
-            List<MediaGenre> mediaGenres = _context.MediaGenres.Where(g => g.ImdbId == imdbId).ToList();
-            List<Genre> genres = _context.Genres.Where(g => g.MediaType == media.Type).ToList();
-            List<Watched> watched = _context.Watched.Where(w => w.ImdbId == imdbId).ToList();
-            List<Cast> cast = _context.Casts.Where(c => c.ImdbId == imdbId && c.Order < 3).OrderBy(c => c.Order).ToList();
-            List<Crew> crew = _context.Crews.Where(c => c.ImdbId == imdbId && c.Job == "Director").ToList();
+            PhysicalMedia physicalMedia = await _physicalMediaService.Get(physicalMediaId);
 
-            MediaInformationViewModel mediaVM = new MediaInformationViewModel(media, mediaGenres, genres, watched, cast, crew);
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, physicalMedia, new SameUserRequirement());
+
+            if (!authorizationResult.Succeeded)
+            {
+                return new ForbidResult();
+            }
+
+            MediaInformationViewModel mediaVM = await _mediaInformationViewModelService.CreateViewModelFromPhysicalMedia(physicalMedia);
             return View(mediaVM);
         }
 
-        public IActionResult EditModal(string imdbId)
+        public async Task<IActionResult> EditModal(Guid physicalMediaId)
         {
-            Movie media = _context.Movies.SingleOrDefault(m => m.MediaUserId == User.Identity.NameId() && m.ImdbId == imdbId);
-            List<DiscType> discTypes = _context.DiscTypes.ToList();
-            List<MediaGenre> mediaGenres = _context.MediaGenres.Where(m => m.ImdbId == imdbId).ToList();
-            List<Genre> genres = _context.Genres.Where(g => g.MediaType == media.Type).ToList();
-            EditMediaViewModel editMedia = new EditMediaViewModel(media, discTypes, mediaGenres, genres);
+            PhysicalMedia physicalMedia = await _physicalMediaService.Get(physicalMediaId);
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, physicalMedia, new SameUserRequirement());
+
+            if (!authorizationResult.Succeeded)
+            {
+                return new ForbidResult();
+            }
+
+            EditMediaViewModel editMedia = await _editMediaViewModelService.CreateViewModel(physicalMedia);
 
             return View(editMedia);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult EditMedia(string imdbId, List<string> extraGenres, int discType, bool digitalCopy)
+        public async Task<IActionResult> EditMedia(EditMediaViewModel editMedia)
         {
-            Movie media = _context.Movies.SingleOrDefault(m => m.MediaUserId == User.Identity.NameId() && m.ImdbId == imdbId);
-            media.DiscTypeId = discType;            
-            media.DigitalCopy = digitalCopy;
+            PhysicalMedia physicalMedia = await _physicalMediaService.Get(editMedia.PhysicalMediaId);
 
-            List<Genre> genres = _context.Genres.Where(g => g.MediaType == media.Type).ToList();
-            List<MediaGenre> mediaGenres = _context.MediaGenres.Where(m => m.ImdbId == imdbId).ToList();
-            foreach (var mediaGenre in mediaGenres)
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, physicalMedia, new SameUserRequirement());
+
+            if (!authorizationResult.Succeeded)
             {
-                foreach(var genre in genres)
-                {
-                    if(mediaGenre.GenreId == genre.GenreId && !genre.Default)
-                    {
-                        _context.Remove(mediaGenre);
-                    }
-                }
+                return new ForbidResult();
             }
-            foreach(var item in extraGenres)
+
+            //PhysicalMedia physicalMedia = _context.PhysicalMedias.SingleOrDefault(p => p.MediaId == editMedia.PhysicalMediaId && p.AppUserId == User.Identity.GetNameIdGuid());
+            physicalMedia.DiscTypeId = editMedia.DiscTypeId;
+            physicalMedia.DigitalCopy = editMedia.DigitalCopy;
+            await _physicalMediaService.Update(physicalMedia);
+
+            List<Genre> genres = _context.Genres.Where(g => g.Extra).ToList();
+            List<MediaGenre> mediaGenres = _context.MediaGenres.Where(m => m.MediaId == editMedia.PhysicalMediaId && genres.Select(g => g.GenreId).Contains(m.GenreId)).ToList();
+
+            if (mediaGenres != null)
             {
-                var genre = genres.SingleOrDefault(g => g.Name == item);
-                _context.Add(new MediaGenre(media.ImdbId, genre));
+                _context.RemoveRange(mediaGenres);
             }
+
+            foreach(var extraGenreId in editMedia.ExtraGenreIds)
+            {
+                var genre = genres.SingleOrDefault(g => g.GenreId == extraGenreId);
+                _context.Add(new ExtraGenre(physicalMedia.PhysicalMediaId, genre));
+            }
+
             _context.SaveChanges();
-            return RedirectToAction("Index", new { type = media.Type });
+
+            return RedirectToAction("Index", new { type = SpinningFilmHelper.MovieType });
         }
     }
 }

@@ -31,6 +31,11 @@ namespace SpinningFilm.Extensions
             return ((ClaimsIdentity)identity).FindFirst(ClaimTypes.NameIdentifier).Value;            
         }
 
+        public static Guid GetNameIdGuid(this IIdentity identity)
+        {
+            return Guid.Parse(((ClaimsIdentity)identity).FindFirst(ClaimTypes.NameIdentifier).Value);
+        }
+
         public static string GetClaimValue(this IIdentity identity, string type)
         {
             try

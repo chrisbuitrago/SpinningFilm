@@ -8,8 +8,8 @@ namespace SpinningFilm.Specifications
 {
     public class GenreSpecification : BaseSpecification<Genre>
     {
-        public GenreSpecification(string mediaType)
-            : base(g => g.MediaType == mediaType)
+        public GenreSpecification(bool extra)
+            : base(g => g.Extra == extra)
         {
 
         }

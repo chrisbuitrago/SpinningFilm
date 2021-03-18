@@ -6,61 +6,58 @@
 
 <div class="">
     <div class="row no-gutters">
-        <div class="col-sm-2">
+        <div class="col-sm-2" style="padding-right: 5px">
             @using (Html.BeginForm("MediaList", "Media", FormMethod.Post, new { @id = "filterForm" }))
             {
                 @Html.HiddenFor(model => model.MediaType)
-                <div style="padding:0px 5px 5px 0px">
+
+                <div class="filter-item">
                     @Html.DropDownList("OrderBy", new List<SelectListItem> { new SelectListItem { Text = "A - Z", Value = "0", Selected = true }, new SelectListItem { Text = "Release Date", Value = "1" } }, new { @class = "form-control" })
                 </div>
-                <div class="btn btn-outline-light" data-toggle="collapse" data-target="#filterCollapse">
-                    <i class="fa fa-plus"></i>
-                    Filters
-                </div>
-                <div id="filterCollapse" class="collapse" style="padding-top:5px; padding-right:5px">
-                    <div class="border-top" style="padding: 5px 0px 0px 0px">
 
-                        <button type="button" class="btn btn-outline-light" data-toggle="collapse" data-target="#genreCollapse">
-                            Genre
-                            <i class="fa fa-chevron-down"></i>
-                        </button>
-                        <div class="collapse" id="genreCollapse">
-                            @foreach (var item in Model.Genres)
-                            {
-                                <div class="form-check">
-                                    <label class="form-check-label">
-                                        <input class="form-check-input" id="genre_@item.GenreId" name="FilteredGenreId" type="checkbox" value="@item.GenreId" />
-                                        <span class="form-check-sign"></span>
-                                        @item.Name
-                                    </label>
-                                </div>
-                            }
-                        </div>
+                <div class="filter-item">
+                    <button type="button" class="btn btn-outline-light" data-toggle="collapse" data-target="#genreCollapse">
+                        Genre
+                        <i class="fa fa-chevron-down"></i>
+                    </button>
+                    <div class="collapse" id="genreCollapse">
+                        @foreach (var item in Model.Genres)
+                        {
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" id="genre_@item.GenreId" name="FilteredGenreId" type="checkbox" value="@item.GenreId" />
+                                    <span class="form-check-sign"></span>
+                                    @item.Name
+                                </label>
+                            </div>
+                        }
                     </div>
-                    <div style="padding-top:5px">
-                        <button type="button" class="btn btn-outline-light" data-toggle="collapse" data-target="#discCollapse">
-                            Disc Type
-                            <i class="fa fa-chevron-down"></i>
-                        </button>
-                        <div class="collapse" id="discCollapse">
-                            @foreach (var item in Model.DiscTypes)
-                            {
-                                <div class="form-check">
-                                    <label class="form-check-label">
-                                        <input class="form-check-input" id="disc_@item.DiscTypeId" name="FilteredDiscTypeId" type="checkbox" value="@item.DiscTypeId" />
-                                        <span class="form-check-sign"></span>
-                                        @item.Description
-                                    </label>
-                                </div>
-                            }
-                        </div>
+                </div>    
+                
+                <div class="filter-item">
+                    <button type="button" class="btn btn-outline-light" data-toggle="collapse" data-target="#discCollapse">
+                        Disc
+                        <i class="fa fa-chevron-down"></i>
+                    </button>
+                    <div class="collapse" id="discCollapse">
+                        @foreach (var item in Model.DiscTypes)
+                        {
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" id="disc_@item.DiscTypeId" name="FilteredDiscTypeId" type="checkbox" value="@item.DiscTypeId" />
+                                    <span class="form-check-sign"></span>
+                                    @item.Description
+                                </label>
+                            </div>
+                        }
                     </div>
-                    <div style="padding-top:5px">
-                        <button type="button" class="btn btn-outline-light" data-toggle="collapse" data-target="#watchedCollapse">
-                            Watched
-                            <i class="fa fa-chevron-down"></i>
-                        </button>
-                    </div>
+                </div>
+
+                <div class="filter-item">
+                    <button type="button" class="btn btn-outline-light" data-toggle="collapse" data-target="#watchedCollapse">
+                        Watched
+                        <i class="fa fa-chevron-down"></i>
+                    </button>
                     <div class="collapse" id="watchedCollapse">
                         <div class="form-check">
                             <label class="form-check-label">
@@ -77,12 +74,13 @@
                             </label>
                         </div>
                     </div>
-                    <div style="padding-top:5px">
-                        <button type="button" class="btn btn-outline-light" data-toggle="collapse" data-target="#digitalCopyCollapse">
-                            Digital Copy
-                            <i class="fa fa-chevron-down"></i>
-                        </button>
-                    </div>
+                </div>
+
+                <div class="filter-item">
+                    <button type="button" class="btn btn-outline-light" data-toggle="collapse" data-target="#digitalCopyCollapse">
+                        Digital Copy
+                        <i class="fa fa-chevron-down"></i>
+                    </button>
                     <div class="collapse" id="digitalCopyCollapse">
                         <div class="form-check">
                             <label class="form-check-label">
@@ -102,14 +100,10 @@
                 </div>
             }
         </div>
-        <div class="col-sm-8">
+        <div class="col-sm-10">
             @using (Html.BeginForm("MediaList", "Media", FormMethod.Post, new { @id = "searchForm" }))
             {
                 <div class="form-row">
-                    @*<div class="col-12">
-                        @Html.TextBox("SearchTerm", null, null, new { @class = "form-control" })
-                        <input type="submit" value="Search" class="btn btn-outline-light" />
-                    </div>*@
                     <div class="col-11">
                         @Html.TextBox("SearchTerm", null, null, new { @class = "form-control", placeholder = "Search Title..." })
                     </div>
@@ -119,7 +113,7 @@
                         </button>
                     </div>
                 </div>
-            }
+             } 
             <div class="row no-gutters" style="padding-top:10px">               
                 <div id="mediaList" class="col">
                     @{ await Html.RenderPartialAsync("MediaList", Model); }

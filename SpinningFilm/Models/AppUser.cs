@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace SpinningFilm.Models
 {
-    [Table("MediaUser")]
-    public class MediaUser
+    [Table("AppUser")]
+    public class AppUser
     {
         [Key, StringLength(36)]
-        public string Id { get; set; }
+        public Guid AppUserId { get; set; }
         [StringLength(200)]
         public string Email { get; set; }
         public string PasswordHash { get; set; }

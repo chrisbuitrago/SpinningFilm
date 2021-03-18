@@ -24,7 +24,8 @@ namespace SpinningFilm.ViewModels
         public List<DiscType> DiscTypes { get; set; } = new List<DiscType>();
         public int NumberOfSeasons { get; set; }
         public int[] SeasonNumbers { get; set; }
-        public List<SeriesSeason> Seasons { get; set; } = new List<SeriesSeason>();
+        //public List<PhysicalSeason> Seasons { get; set; } = new List<PhysicalSeason>();
+        public List<PhysicalMedia> PhysicalMedias { get; set; } = new List<PhysicalMedia>();
         public List<SelectListItem> DiscTypeList()
         {
             List<SelectListItem> list = new List<SelectListItem>();

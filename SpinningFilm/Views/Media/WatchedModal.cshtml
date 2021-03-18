@@ -12,8 +12,7 @@
                 @using (Html.BeginForm("WatchedAdd", "Media", FormMethod.Post, new { id = "watchedForm" }))
                 {
                     @Html.AntiForgeryToken()
-                    @Html.HiddenFor(model => model.ImdbId)
-                    @Html.HiddenFor(model => model.MediaType)
+                    @Html.HiddenFor(model => model.PhysicalMediaId)
                     <div style="font-size:20px">
                         When did you watch <b>@Model.Title?</b> 
                     </div>    
@@ -48,7 +47,7 @@
             type: "POST",
             data: $("#watchedForm").serialize(),
             success: function (result) {
-                $("#watched-"+result.imdbId).text("Watched: " + result.count + " time(s) | Last Watched: " + result.lastWatched);
+                $("#watched-"+result.physicalMediaId).text("Watched: " + result.count + " time(s) | Last Watched: " + result.lastWatched);
                 $("#addWatchedModal").modal("hide");
             },
             error: function () {

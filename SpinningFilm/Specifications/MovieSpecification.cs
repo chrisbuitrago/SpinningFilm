@@ -9,28 +9,32 @@ namespace SpinningFilm.Specifications
     public class MovieSpecification : BaseSpecification<Movie>
     {
         public MovieSpecification(string userId)
-            : base(r => r.MediaUserId == userId)
+            : base(r => r.MediaId == Guid.Parse(userId))
         {
-            ApplyOrderBy(r => r.Title);
         }
 
-        public MovieSpecification(MediaFilter filter)
-            : base(r => r.MediaUserId == filter.UserId
-                && (filter.FilteredDiscTypeId.Count == 0 || filter.FilteredDiscTypeId.Contains(r.DiscTypeId))
-                && (string.IsNullOrEmpty(filter.SearchTerm) || r.Title.ToLower().Contains(filter.SearchTerm.ToLower()))
-                && ((!filter.DigitalCopy && !filter.NoDigitalCopy) || (filter.DigitalCopy && filter.NoDigitalCopy) || r.DigitalCopy == filter.DigitalCopy)
-                && ((!filter.Watched && !filter.NotWatched) || (filter.Watched && filter.NotWatched) || r.Watched == filter.Watched))
+        public MovieSpecification(Guid mediaId)
+            : base(r => r.MediaId == mediaId)
         {
-            if (filter.OrderBy == 1)
-            {
-                ApplyOrderBy(r => r.ReleaseDate);
-                AddThenBy(r => r.Title);
-            }
-            else
-            {
-                ApplyOrderBy(r => r.Title);
-                AddThenBy(r => r.ReleaseDate);
-            }
         }
+
+        //public MovieSpecification(MediaFilter filter)
+        //    : base(r => r.MediaUserId == filter.UserId
+        //        && (filter.FilteredDiscTypeId.Count == 0 || filter.FilteredDiscTypeId.Contains(r.DiscTypeId))
+        //        && (string.IsNullOrEmpty(filter.SearchTerm) || r.Title.ToLower().Contains(filter.SearchTerm.ToLower()))
+        //        && ((!filter.DigitalCopy && !filter.NoDigitalCopy) || (filter.DigitalCopy && filter.NoDigitalCopy) || r.DigitalCopy == filter.DigitalCopy)
+        //        && ((!filter.Watched && !filter.NotWatched) || (filter.Watched && filter.NotWatched) || r.Watched == filter.Watched))
+        //{
+        //    if (filter.OrderBy == 1)
+        //    {
+        //        ApplyOrderBy(r => r.ReleaseDate);
+        //        AddThenBy(r => r.Title);
+        //    }
+        //    else
+        //    {
+        //        ApplyOrderBy(r => r.Title);
+        //        AddThenBy(r => r.ReleaseDate);
+        //    }
+        //}
     }
 }

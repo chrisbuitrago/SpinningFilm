@@ -18,7 +18,7 @@
                         </div>
                         <div class="row">
                             <div class="col f-b">
-                                @Model.Media.Rated | @Model.Media.Runtime min | @Model.Media.ReleaseDate.ToString("dd MMMM yyyy")
+                                @Model.Media.Rated | @Model.Movie.Runtime min | @Model.Movie.ReleaseDate.ToString("dd MMMM yyyy")
                             </div>
                         </div>
                         <div class="row">
@@ -36,10 +36,10 @@
                                 Genre(s):
                             </div>
                             <div class="col-10">
-                                @for (int i = 0; i < Model.MediaGenres.Count; i++)
+                                @for (int i = 0; i < Model.MediaExtraGenres.Count; i++)
                                 {
-                                    <text>@Model.MediaGenres[i].Genre.Name</text>
-                                    if (i != Model.MediaGenres.Count - 1)
+                                    <text>@Model.MediaExtraGenres[i].Name</text>
+                                    if (i != Model.MediaExtraGenres.Count - 1)
                                     {
                                         <text>, </text>
                                     }

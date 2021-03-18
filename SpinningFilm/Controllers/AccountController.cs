@@ -17,10 +17,10 @@ namespace SpinningFilm.Controllers
     //[Route("api/[controller]/[action]")]
     public class AccountController : Controller
     {
-        private readonly UserManager<MediaUser> _userManager;
+        private readonly UserManager<AppUser> _userManager;
         private readonly SpinningFilmContext _context;
 
-        public AccountController(UserManager<MediaUser> userManager, SpinningFilmContext context)
+        public AccountController(UserManager<AppUser> userManager, SpinningFilmContext context)
         {
             this._userManager = userManager;
             _context = context;
@@ -46,7 +46,7 @@ namespace SpinningFilm.Controllers
                 if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
                 {
                     var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
-                    identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
+                    identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.AppUserId.ToString()));
                     identity.AddClaim(new Claim(ClaimTypes.Name, user.NormalizeEmail));
                     identity.AddClaim(new Claim(ClaimTypes.GivenName, user.FirstName));
 
@@ -100,9 +100,9 @@ namespace SpinningFilm.Controllers
                 //    };
                 //}
 
-                user = new MediaUser
+                user = new AppUser
                 {
-                    Id = Guid.NewGuid().ToString(),
+                    AppUserId = Guid.NewGuid(),
                     Email = model.Email,
                     FirstName = model.FirstName,
                     LastName = model.LastName
@@ -139,7 +139,7 @@ namespace SpinningFilm.Controllers
 
         public IActionResult Manage()
         {
-            MediaUser user = _context.MediaUsers.SingleOrDefault(m => m.Id == User.Identity.NameId());
+            AppUser user = _context.AppUsers.SingleOrDefault(m => m.AppUserId == Guid.Parse(User.Identity.NameId()));
 
             return View(user);
         }
@@ -155,7 +155,7 @@ namespace SpinningFilm.Controllers
         {
             if (ModelState.IsValid)
             {
-                MediaUser user = await _userManager.FindByEmailAsync(forgotPassword.Email);
+                AppUser user = await _userManager.FindByEmailAsync(forgotPassword.Email);
                 if(user != null && await _userManager.IsEmailConfirmedAsync(user))
                 {
                     string token = await _userManager.GeneratePasswordResetTokenAsync(user);

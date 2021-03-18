@@ -12,25 +12,23 @@ namespace SpinningFilm.Models
     {
         [Key]
         public Guid MediaGenreId { get; set; }
-        public string ImdbId { get; set; }
+        public Guid MediaId { get; set; }
         public int GenreId { get; set; }
-        public string MediaType { get; set; }
         public Genre Genre { get; set; }
         public MediaGenre() { }
 
-        public MediaGenre(string imdbId, int genreId)
+        public MediaGenre(Guid mediaId, int genreId)
         {
             MediaGenreId = Guid.NewGuid();
-            ImdbId = imdbId;
+            MediaId = mediaId;
             GenreId = genreId;
         }
 
-        public MediaGenre(string imdbId, Genre genre)
+        public MediaGenre(Guid mediaId, Genre genre)
         {
             MediaGenreId = Guid.NewGuid();
-            ImdbId = imdbId;
+            MediaId = mediaId;
             GenreId = genre.GenreId;
-            MediaType = genre.MediaType;
         }
     }
 }

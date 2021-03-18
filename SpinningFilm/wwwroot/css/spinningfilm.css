@@ -8,6 +8,17 @@
     margin-bottom: 10px;
 }
 
+.ml-card-small {
+    border: 1px solid #dee2e6;
+    background-color: #6c757d;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.ml-card-right {
+    padding: .19rem .19rem .13rem .13rem;
+}
+
 .media-info-title {
     font-size: 1.75rem;
     font-weight: 500;
@@ -27,6 +38,10 @@
     font-weight: 500;
 }
 
+.media-tile-small {
+    padding:5px;
+}
+
 .media-tile-format {
     max-width: 92px;
 }
@@ -37,7 +52,7 @@
     }
 }
 
-.btn-media-watched {
+/*.btn-media-watched {
     padding: 2px 6px 2px 6px;
 }
 
@@ -45,35 +60,44 @@
     .btn-media-watched {
         padding: 2px 5px 2px 5px;
     }
+}*/
+.btn-media-watched {
+    padding: .13rem .4rem ;
+}
+
+@media (max-width: 1200px) {
+    .btn-media-watched {
+        padding: .13rem .3rem;
+    }
 }
 
 .btn-media-info {
-    padding: 2px 9px;
+    padding: .13rem .6rem;
 }
 
 @media (max-width: 1200px) {
     .btn-media-info {
-        padding: 2px 8px;
+        padding: .13rem .5rem;
     }
 }
 
 .btn-media-delete {
-    padding: 2px 7px;
+    padding: .13rem .5rem;
 }
 
 @media (max-width: 1200px) {
     .btn-media-delete {
-        padding: 2px 6px;
+        padding: .13rem .4rem;
     }
 }
 
 .btn-media-edit {
-    padding: 2px 4px 3px 7px;
+    padding: .13rem .3rem .19rem .4rem;
 }
 
 @media (max-width: 1200px) {
     .btn-media-edit {
-        padding: 2px 3px 3px 6px;
+        padding: .13rem .19rem .19rem .4rem;
     }
 }
 
@@ -93,6 +117,41 @@
     height: auto;
 }
 
+.img-thumbnail-sf-sm {
+    background-color: #fff;
+    border: none;
+    border-radius: .25rem;
+    max-width: 100%;
+    height: auto;
+}
+
 .text-light-blue {
     color:#66b2ff!important;
+}
+
+.filter-item {
+    padding-bottom: 5px;
+}
+
+/*.ml-btn {
+        border: 1px solid;
+    background-color: transparent;
+    vertical-align: middle;
+    text-align: center;
+    border-radius: .25rem;
+    height: 100%;
+    width: 100%;
+    padding: .375rem
+    height: 100%;
+    width: 100%;
+    padding: .375rem
+}*/
+
+.ml-btn {
+    padding: .13rem 0rem 0rem 0rem;
+}
+
+.ml-btn button {
+    height: 100%;
+    width: 100%;
 }

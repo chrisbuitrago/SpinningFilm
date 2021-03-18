@@ -66,6 +66,16 @@ namespace SpinningFilm.Data
             await _dbContext.SaveChangesAsync();
         }
 
+        public async Task DeleteRangeAsync(IEnumerable<TEntity> entities)
+        {
+            foreach (var entity in entities)
+            {
+                _dbContext.Set<TEntity>().Remove(entity);
+            }
+
+            await _dbContext.SaveChangesAsync();
+        }
+
         private IQueryable<TEntity> ApplySpecification(ISpecification<TEntity> spec)
         {
             return SpecificationEvaluator<TEntity>.GetQuery(_dbContext.Set<TEntity>().AsQueryable(), spec);

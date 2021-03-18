@@ -17,6 +17,8 @@ using Microsoft.AspNetCore.Identity;
 using SpinningFilm.Models;
 using SpinningFilm.Infrastructure;
 using SpinningFilm.Interfaces;
+using SpinningFilm.Auth;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SpinningFilm
 {
@@ -34,22 +36,29 @@ namespace SpinningFilm
         {
             var appSettingsSections = Configuration.GetSection("AppSettings");
             services.Configure<ApiSettings>(appSettingsSections);
-            services.AddScoped<IApiService, ApiService>();
+            
             services.AddControllersWithViews();
+            services.AddHttpContextAccessor();
             services.AddDbContext<SpinningFilmContext>(options => options.UseSqlServer(Configuration.GetConnectionString("SpinningFilmConnection")));
 
-            services.AddIdentityCore<MediaUser>(options =>
+            services.AddIdentityCore<AppUser>(options =>
             {
                 options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultEmailProvider;
             })
             .AddDefaultTokenProviders();
 
-            services.AddScoped(typeof(IMediaRepository<>), typeof(MediaRepository<>));
-            services.AddScoped<IUserStore<MediaUser>, MediaUserStore>();
-            services.AddScoped<IMediaListViewModelService, MediaListViewModelService>();
-
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme);
+                .AddCookie(options =>
+                {
+                    // Cookie settings
+                    options.Cookie.Name = "spinningfilm";
+                    options.Cookie.HttpOnly = true;
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+
+                    options.LoginPath = "/Account/Login";
+                    options.AccessDeniedPath = "/Account/AccessDenied";
+                    options.SlidingExpiration = true;
+                });
 
             services.Configure<IdentityOptions>(options =>
             {
@@ -72,16 +81,41 @@ namespace SpinningFilm
                 options.User.RequireUniqueEmail = true;
             });
 
-            services.ConfigureApplicationCookie(options =>
+            services.AddAuthorization(options =>
             {
-                // Cookie settings
-                options.Cookie.HttpOnly = true;
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
-
-                options.LoginPath = "/Identity/Account/Login";
-                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
-                options.SlidingExpiration = true;
+                options.AddPolicy("TestUser", policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.AddRequirements(new SameUserRequirement());
+                });
             });
+
+            services.AddSingleton<IAuthorizationHandler, MediaAuthorizationHandler>();
+
+            services.AddScoped(typeof(IMediaRepository<>), typeof(MediaRepository<>));
+            services.AddScoped<IApiService, ApiService>();
+            services.AddScoped<IUserStore<AppUser>, MediaUserStore>();
+            services.AddScoped<IMediaListViewModelService, MediaListViewModelService>();
+            services.AddScoped<IMediaInformationViewModelService, MediaInformationViewModelService>();
+            services.AddScoped<IWatchedViewModelService, WatchedViewModelService>();
+            services.AddScoped<IPhysicalMediaService, PhysicalMediaService>();
+            services.AddScoped<IEditMediaViewModelService, EditMediaViewModelService>();
+            
+            //services.ConfigureExternalCookie(options => 
+            //{
+            //    options.Cookie.Name = "test.test";
+            //});
+            //services.ConfigureApplicationCookie(options =>
+            //{
+            //    // Cookie settings
+            //    options.Cookie.Name = "spinningfilm";
+            //    options.Cookie.HttpOnly = true;
+            //    options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+
+            //    options.LoginPath = "/Account/Login";
+            //    options.AccessDeniedPath = "/Account/AccessDenied";
+            //    options.SlidingExpiration = true;
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

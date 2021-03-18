@@ -1,6 +1,6 @@
 using System;
 
-namespace SpinningFilm.Models
+namespace SpinningFilm.ViewModels
 {
     public class ErrorViewModel
     {

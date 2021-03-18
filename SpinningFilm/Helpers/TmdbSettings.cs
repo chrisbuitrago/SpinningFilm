@@ -11,7 +11,5 @@ namespace SpinningFilm.Helpers
         public static string PosterMedium { get; } = "http://image.tmdb.org/t/p/w342/";
         public static string PosterLarge { get; } = "http://image.tmdb.org/t/p/780/";
         public static string PosterOriginal { get;} = "http://image.tmdb.org/t/p/original/";
-        public static string SeriesType { get; } = "tv";
-        public static string MovieType { get; } = "movie";
     }
 }

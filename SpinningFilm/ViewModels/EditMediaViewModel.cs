@@ -9,33 +9,27 @@ namespace SpinningFilm.ViewModels
 {
     public class EditMediaViewModel
     {
-        public string ImdbId { get; set; }
+        public Guid PhysicalMediaId { get; set; }
         public string Poster { get; set; }
         public int DiscTypeId { get; set; }
         public bool DigitalCopy { get; set; }
-        public List<string> ExtraGenres { get; set; } = new List<string>();
-        public List<DiscType> DiscTypes { get; set; } = new List<DiscType>();
+        public IReadOnlyList<ExtraGenre> ThisDiscExtraGenres { get; set; }
+        public IReadOnlyList<Genre> ExtraGenres { get; set; }
+        public List<int> ExtraGenreIds { get; set; } = new List<int>();
+        public IReadOnlyList<DiscType> DiscTypes { get; set; } = new List<DiscType>();
 
         public EditMediaViewModel() { }
 
-        public EditMediaViewModel(Movie media, List<DiscType> discTypes, List<MediaGenre> mediaGenres, List<Genre> genres)
+        public EditMediaViewModel(Media media, PhysicalMedia physicalMedia, IReadOnlyList<DiscType> discTypes, IReadOnlyList<Genre> extraGenres, IReadOnlyList<ExtraGenre> thisDiscExtraGenres)
         {
-            ImdbId = media.ImdbId;
+            PhysicalMediaId = physicalMedia.PhysicalMediaId;
             Poster = media.PosterSmall;
-            DiscTypeId = media.DiscTypeId;
-            DigitalCopy = media.DigitalCopy;
+            DiscTypeId = physicalMedia.DiscTypeId;
+            DigitalCopy = physicalMedia.DigitalCopy;
             DiscTypes = discTypes;
-
-            foreach (var mediaGenre in mediaGenres)
-            {
-                foreach (var genre in genres)
-                {
-                    if (mediaGenre.GenreId == genre.GenreId && !genre.Default)
-                    {
-                        ExtraGenres.Add(genre.Name);
-                    }
-                }
-            }
+            ExtraGenres = extraGenres;
+            ThisDiscExtraGenres = thisDiscExtraGenres;
+            ExtraGenreIds = thisDiscExtraGenres.Select(g => g.GenreId).ToList();
         }
 
         public List<SelectListItem> DiscTypeList()

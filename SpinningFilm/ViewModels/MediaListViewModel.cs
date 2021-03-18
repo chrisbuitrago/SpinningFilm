@@ -9,7 +9,7 @@ namespace SpinningFilm.ViewModels
     public class MediaListViewModel
     {
         public string MediaType { get; set; }
-        public List<Movie> Media { get; set; }
+        public List<PhysicalMediaMovie> PhysicalMedia { get; set; }
         public List<Genre> Genres { get; set; }
         public List<DiscType> DiscTypes { get; set; }
         public MediaFilter Filter { get; set; }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SpinningFilm.Infrastructure
 {
-    public class MediaUserStore : IUserStore<MediaUser>, IUserPasswordStore<MediaUser>, IUserEmailStore<MediaUser>, IUserSecurityStampStore<MediaUser>
+    public class MediaUserStore : IUserStore<AppUser>, IUserPasswordStore<AppUser>, IUserEmailStore<AppUser>, IUserSecurityStampStore<AppUser>
     {
 
         private readonly SpinningFilmContext _context;
@@ -19,7 +19,7 @@ namespace SpinningFilm.Infrastructure
         }
 
         #region IUserStore
-        public Task<IdentityResult> CreateAsync(MediaUser user, CancellationToken cancellationToken)
+        public Task<IdentityResult> CreateAsync(AppUser user, CancellationToken cancellationToken)
         {
             _context.Add(user);
             _context.SaveChanges();
@@ -27,13 +27,13 @@ namespace SpinningFilm.Infrastructure
             return Task.FromResult(IdentityResult.Success);
         }
 
-        public Task<IdentityResult> DeleteAsync(MediaUser user, CancellationToken cancellationToken)
+        public Task<IdentityResult> DeleteAsync(AppUser user, CancellationToken cancellationToken)
         {
-            var appUser = _context.MediaUsers.FirstOrDefault(u => u.Id == user.Id);
+            var appUser = _context.AppUsers.FirstOrDefault(u => u.AppUserId == user.AppUserId);
 
             if (appUser != null)
             {
-                _context.MediaUsers.Remove(appUser);
+                _context.AppUsers.Remove(appUser);
                 _context.SaveChanges();
             }
 
@@ -45,46 +45,46 @@ namespace SpinningFilm.Infrastructure
             // throw new NotImplementedException();
         }
 
-        public Task<MediaUser> FindByIdAsync(string userId, CancellationToken cancellationToken)
+        public Task<AppUser> FindByIdAsync(string userId, CancellationToken cancellationToken)
         {
-            return Task.FromResult(_context.MediaUsers.FirstOrDefault(u => u.Id == userId));
+            return Task.FromResult(_context.AppUsers.FirstOrDefault(u => u.AppUserId == Guid.Parse(userId)));
         }
 
-        public Task<MediaUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
+        public Task<AppUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
         {
-            return Task.FromResult(_context.MediaUsers.FirstOrDefault(u => u.NormalizeEmail == normalizedUserName));
+            return Task.FromResult(_context.AppUsers.FirstOrDefault(u => u.NormalizeEmail == normalizedUserName));
         }
 
-        public Task<string> GetNormalizedUserNameAsync(MediaUser user, CancellationToken cancellationToken)
+        public Task<string> GetNormalizedUserNameAsync(AppUser user, CancellationToken cancellationToken)
         {
             return Task.FromResult(user.NormalizeEmail);
         }
 
-        public Task<string> GetUserIdAsync(MediaUser user, CancellationToken cancellationToken)
+        public Task<string> GetUserIdAsync(AppUser user, CancellationToken cancellationToken)
         {
-            return Task.FromResult(user.Id.ToString());
+            return Task.FromResult(user.AppUserId.ToString());
         }
 
-        public Task<string> GetUserNameAsync(MediaUser user, CancellationToken cancellationToken)
+        public Task<string> GetUserNameAsync(AppUser user, CancellationToken cancellationToken)
         {
             return Task.FromResult(user.Email);
         }
 
-        public Task SetNormalizedUserNameAsync(MediaUser user, string normalizedName, CancellationToken cancellationToken)
+        public Task SetNormalizedUserNameAsync(AppUser user, string normalizedName, CancellationToken cancellationToken)
         {
             user.NormalizeEmail = normalizedName;
             return Task.CompletedTask;
         }
 
-        public Task SetUserNameAsync(MediaUser user, string userName, CancellationToken cancellationToken)
+        public Task SetUserNameAsync(AppUser user, string userName, CancellationToken cancellationToken)
         {
             user.Email = userName;
             return Task.CompletedTask;
         }
 
-        public Task<IdentityResult> UpdateAsync(MediaUser user, CancellationToken cancellationToken)
+        public Task<IdentityResult> UpdateAsync(AppUser user, CancellationToken cancellationToken)
         {
-            var appUser = _context.MediaUsers.FirstOrDefault(u => u.Id == user.Id);
+            var appUser = _context.AppUsers.FirstOrDefault(u => u.AppUserId == user.AppUserId);
             
             if (appUser != null)
             {
@@ -102,17 +102,17 @@ namespace SpinningFilm.Infrastructure
         #endregion
 
         #region IUserPasswordStore
-        public Task<bool> HasPasswordAsync(MediaUser user, CancellationToken cancellationToken)
+        public Task<bool> HasPasswordAsync(AppUser user, CancellationToken cancellationToken)
         {
             return Task.FromResult(user.PasswordHash != null);
         }
 
-        public Task<string> GetPasswordHashAsync(MediaUser user, CancellationToken cancellationToken)
+        public Task<string> GetPasswordHashAsync(AppUser user, CancellationToken cancellationToken)
         {
             return Task.FromResult(user.PasswordHash);
         }
 
-        public Task SetPasswordHashAsync(MediaUser user, string passwordHash, CancellationToken cancellationToken)
+        public Task SetPasswordHashAsync(AppUser user, string passwordHash, CancellationToken cancellationToken)
         {
             user.PasswordHash = passwordHash;
             return Task.CompletedTask;
@@ -120,38 +120,38 @@ namespace SpinningFilm.Infrastructure
         #endregion
 
         #region IUserEmailStore
-        public Task<MediaUser> FindByEmailAsync(string email, CancellationToken cancellationToken)
+        public Task<AppUser> FindByEmailAsync(string email, CancellationToken cancellationToken)
         {
-            return Task.FromResult(_context.MediaUsers.FirstOrDefault(u => u.Email == email));
+            return Task.FromResult(_context.AppUsers.FirstOrDefault(u => u.Email == email));
         }
-        public Task<string> GetEmailAsync(MediaUser user, CancellationToken cancellationToken)
+        public Task<string> GetEmailAsync(AppUser user, CancellationToken cancellationToken)
         {
             return Task.FromResult(user.Email);
         }
 
-        public Task<bool> GetEmailConfirmedAsync(MediaUser user, CancellationToken cancellationToken)
+        public Task<bool> GetEmailConfirmedAsync(AppUser user, CancellationToken cancellationToken)
         {
             return Task.FromResult(user.EmailConfirmed);
         }
 
-        public Task<string> GetNormalizedEmailAsync(MediaUser user, CancellationToken cancellationToken)
+        public Task<string> GetNormalizedEmailAsync(AppUser user, CancellationToken cancellationToken)
         {
             return Task.FromResult(user.NormalizeEmail);
         }
 
-        public Task SetEmailAsync(MediaUser user, string email, CancellationToken cancellationToken)
+        public Task SetEmailAsync(AppUser user, string email, CancellationToken cancellationToken)
         {
             user.Email = email;
             return Task.CompletedTask;
         }
 
-        public Task SetEmailConfirmedAsync(MediaUser user, bool confirmed, CancellationToken cancellationToken)
+        public Task SetEmailConfirmedAsync(AppUser user, bool confirmed, CancellationToken cancellationToken)
         {
             user.EmailConfirmed = confirmed;
             return Task.CompletedTask;
         }
 
-        public Task SetNormalizedEmailAsync(MediaUser user, string normalizedEmail, CancellationToken cancellationToken)
+        public Task SetNormalizedEmailAsync(AppUser user, string normalizedEmail, CancellationToken cancellationToken)
         {
             user.NormalizeEmail = normalizedEmail;
             return Task.CompletedTask;
@@ -159,12 +159,12 @@ namespace SpinningFilm.Infrastructure
         #endregion
 
         #region IUserSecurityStampStore
-        public Task<string> GetSecurityStampAsync(MediaUser user, CancellationToken cancellationToken)
+        public Task<string> GetSecurityStampAsync(AppUser user, CancellationToken cancellationToken)
         {
             return Task.FromResult(user.SecurityStamp);
         }
 
-        public Task SetSecurityStampAsync(MediaUser user, string stamp, CancellationToken cancellationToken)
+        public Task SetSecurityStampAsync(AppUser user, string stamp, CancellationToken cancellationToken)
         {
             user.SecurityStamp = stamp;
             return Task.CompletedTask;

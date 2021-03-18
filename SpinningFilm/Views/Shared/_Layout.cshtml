@@ -29,8 +29,8 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMediaLink" data-toggle="dropdown">My Media</a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMediaLink">
-                                @Html.ActionLink("Movies", "Index", "Media", new { mediatype = TmdbSettings.MovieType }, new { @class = "dropdown-item" })
-                                @Html.ActionLink("TV", "Index", "Media", new { mediatype = TmdbSettings.SeriesType }, new { @class = "dropdown-item" })
+                                @Html.ActionLink("Movies", "Index", "Media", new { mediatype = SpinningFilmHelper.MovieType }, new { @class = "dropdown-item" })
+                                @Html.ActionLink("TV", "Index", "Media", new { mediatype = SpinningFilmHelper.SeriesType }, new { @class = "dropdown-item" })
                             </div>
                         </li>
                         <li class="nav-item">

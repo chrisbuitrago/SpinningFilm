@@ -17,8 +17,7 @@ namespace SpinningFilm.Models
         public string CrewName { get; set; }
         public string Department { get; set; }
         public string Job { get; set; }
-        public string ImdbId { get; set; }
-
+        public Guid MediaId { get; set; }
         public Crew()
         {
             CrewId = Guid.NewGuid();

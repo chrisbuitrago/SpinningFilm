@@ -18,7 +18,7 @@ namespace SpinningFilm.Models
         [JsonProperty(PropertyName = "character")]
         public string CharacterName { get; set; }
         public int Order { get; set; }
-        public string ImdbId { get; set; }
+        public Guid MediaId { get; set; }
         public Cast()
         {
             CastId = Guid.NewGuid();

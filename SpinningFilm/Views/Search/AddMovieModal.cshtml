@@ -1,4 +1,4 @@
-﻿@model SpinningFilm.ViewModels.AddMediaModalViewModel
+﻿@model SpinningFilm.ViewModels.AddMovieViewModel
 
 @{
     Layout = null;
@@ -25,13 +25,13 @@
                         Did this include a digital copy? @Html.DropDownList("DigitalCopy", new List<SelectListItem> { new SelectListItem { Text = "Yes", Value = "True" }, new SelectListItem { Text = "No", Value = "False" } }, "", new { @class = "form-control required" })
                     </div>
                     <div>
-                        Select any extra genres you want to attach to this movie:
-                        <div>
-                            <input type="checkbox" name="extragenres" value="Halloween" /> Halloween
-                        </div>
-                        <div>
-                            <input type="checkbox" name="extragenres" value="Christmas" /> Christmas
-                        </div>
+                        Select any extra genres for this movie:
+                        @foreach (var item in Model.ExtraGenres)
+                        {
+                            <div>
+                                <input type="checkbox" name="extragenreids" value="@item.GenreId" /> @item.Name
+                            </div>
+                        }
                     </div>
                     <div>
                         <input type="submit" value="Submit" class="btn btn-success" />

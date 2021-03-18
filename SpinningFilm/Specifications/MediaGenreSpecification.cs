@@ -8,8 +8,8 @@ namespace SpinningFilm.Specifications
 {
     public class MediaGenreSpecification : BaseSpecification<MediaGenre>
     {
-        public MediaGenreSpecification(string mediaType)
-            : base(mg => mg.MediaType == mediaType)
+        public MediaGenreSpecification(List<int> filteredGenreIds)
+            : base(m => filteredGenreIds.Contains(m.GenreId))
         {
 
         }

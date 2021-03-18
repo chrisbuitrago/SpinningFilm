@@ -17,9 +17,11 @@ namespace SpinningFilm.Models
         [Required]
         public string Name { get; set; }
         [Required]
-        public string MediaType { get; set; }
-        [Required]
-        public bool Default { get; set; }
+        public bool Extra { get; set; }
+        public Genre()
+        {
+            Extra = true;
+        }
 
         public List<Genre> MissingGenres(List<Genre> dbGenres, List<string> Genres)
         {

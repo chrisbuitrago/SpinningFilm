@@ -1,0 +1,227 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div class="border-bottom">
+    <div class="btn btn-outline-light" data-toggle="collapse" data-target="#filterCollapse">
+        <i class="fa fa-plus"></i>
+        Filters
+    </div>
+</div>
+<div id="filterCollapse" class="collapse" style="padding-top:5px; padding-right:5px">
+    <div class="border-top" style="padding: 5px 0px 0px 0px">
+
+        <button type="button" class="btn btn-outline-light" data-toggle="collapse" data-target="#genreCollapse">
+            Genre
+            <i class="fa fa-chevron-down"></i>
+        </button>
+        <div class="collapse" id="genreCollapse">
+            @foreach (var item in Model.Genres)
+            {
+                <div class="form-check">
+                    <label class="form-check-label">
+                        <input class="form-check-input" id="genre_@item.GenreId" name="FilteredGenreId" type="checkbox" value="@item.GenreId" />
+                        <span class="form-check-sign"></span>
+                        @item.Name
+                    </label>
+                </div>
+            }
+        </div>
+    </div>
+    <div style="padding-top:5px">
+        <button type="button" class="btn btn-outline-light" data-toggle="collapse" data-target="#discCollapse">
+            Disc Type
+            <i class="fa fa-chevron-down"></i>
+        </button>
+        <div class="collapse" id="discCollapse">
+            @foreach (var item in Model.DiscTypes)
+            {
+                <div class="form-check">
+                    <label class="form-check-label">
+                        <input class="form-check-input" id="disc_@item.DiscTypeId" name="FilteredDiscTypeId" type="checkbox" value="@item.DiscTypeId" />
+                        <span class="form-check-sign"></span>
+                        @item.Description
+                    </label>
+                </div>
+            }
+        </div>
+    </div>
+    <div style="padding-top:5px">
+        <button type="button" class="btn btn-outline-light" data-toggle="collapse" data-target="#watchedCollapse">
+            Watched
+            <i class="fa fa-chevron-down"></i>
+        </button>
+    </div>
+    <div class="collapse" id="watchedCollapse">
+        <div class="form-check">
+            <label class="form-check-label">
+                <input class="form-check-input" id="watched" name="Watched" type="checkbox" value="True" />
+                <span class="form-check-sign"></span>
+                Watched
+            </label>
+        </div>
+        <div class="form-check">
+            <label class="form-check-label">
+                <input class="form-check-input" id="notWatched" name="NotWatched" type="checkbox" value="True" />
+                <span class="form-check-sign"></span>
+                Not Watched
+            </label>
+        </div>
+    </div>
+    <div style="padding-top:5px">
+        <button type="button" class="btn btn-outline-light" data-toggle="collapse" data-target="#digitalCopyCollapse">
+            Digital Copy
+            <i class="fa fa-chevron-down"></i>
+        </button>
+    </div>
+    <div class="collapse" id="digitalCopyCollapse">
+        <div class="form-check">
+            <label class="form-check-label">
+                <input class="form-check-input" id="digitalCopy" name="DigitalCopy" type="checkbox" value="True" />
+                <span class="form-check-sign"></span>
+                Digital Copy
+            </label>
+        </div>
+        <div class="form-check">
+            <label class="form-check-label">
+                <input class="form-check-input" id="noDigitalCopy" name="NoDigitalCopy" type="checkbox" value="True" />
+                <span class="form-check-sign"></span>
+                No Digital Copy
+            </label>
+        </div>
+    </div>
+</div>
+
+@foreach (var item in Model.PhysicalMedia)
+{
+    <div class="row no-gutters border bg-secondary shadow-sm ml-card">
+        <div class="col-sm-2">
+            <div class="media-tile-poster">
+                <img src="@item.PosterOriginal" class="img-thumbnail-ml" />
+            </div>
+        </div>
+        <div class="col-sm-8">
+            <div class="media-title">@item.Title </div>
+            <div>
+                @item.ReleaseDate.Year | @item.Rated @if (item.DigitalCopy)
+                {<text>| <i class="fa fa-tv text-light-blue" title="You own the digital copy"></i></text>}
+            </div>
+            <div><img src="~/img/imdb_logo.svg" width="45" /> - @item.ImdbRating | <img src="~/img/metacritic_logo.svg" width="25" /> - @item.Metascore</div>
+            <div id="watched-@item.PhysicalMediaId">
+                Watched: @item.WatchedCount time(s)
+                @if (item.Watched)
+                {
+                    <text>| Last Watched: @item.LastWatched.Value.ToString("MM/dd/yyyy")</text>
+                }
+            </div>
+            <div class="text-truncate text-wrap">@item.PlotTruncated</div>
+        </div>
+        <div class="col-sm-2" style="padding-left:1.4rem">
+            <div class="row">
+                <div class="col">
+                    <div class="media-tile-format">
+                        <img src="@item.DiscTypeLogoLink" class="img-thumbnail" />
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="padding-top:5px">
+                <div class="col">
+                    <button title="Add the date you last watched this" data-arg1="@item.PhysicalMediaId" data-arg2="@item.Title" class="btn btn-outline-light btn-media-watched">
+                        <i class="fa fa-eye"></i>
+                    </button>
+                    <button title="Get more information" data-arg1="@item.MediaId" class="btn btn-outline-light btn-media-info">
+                        <i class="fa fa-question"></i>
+                    </button>
+                    <button title="Delete from your list" data-arg1="@item.PhysicalMediaId" class="btn btn-danger btn-media-delete">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="row" style="padding-top:5px">
+                <div class="col">
+                    <button title="Edit" type="button" data-arg1="@item.MediaId" class="btn btn-outline-light btn-media-edit">
+                        <i class="fa fa-edit"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+<div class="row no-gutters">
+    @foreach (var item in Model.PhysicalMedia)
+    {
+        <div class="col-sm-6">
+            <div class="row no-gutters ml-card-small">
+                <div class="col-sm-4">
+                    <img src="@item.PosterOriginal" class="img-thumbnail-ml" />
+                </div>
+                <div class="col-sm-5">
+                    <div class="media-title">
+                        @item.Title
+                    </div>
+                    <div>
+                        @item.ReleaseDate.Year | @item.Rated @if (item.DigitalCopy)
+                        {<text>| <i class="fa fa-tv text-light-blue" title="You own the digital copy"></i></text>}
+                    </div>
+                    <div>
+                        <img src="~/img/imdb_logo.svg" width="45" /> - @item.ImdbRating
+                    </div>
+                    <div>
+                        <img src="~/img/metacritic_logo.svg" width="25" /> - @item.Metascore
+                    </div>
+                    <div id="watched-@item.PhysicalMediaId">
+                        Watched: @item.WatchedCount time(s)
+                        @if (item.Watched)
+                        {
+                            <text>| Last Watched: @item.LastWatched.Value.ToString("MM/dd/yyyy")</text>
+                        }
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="ml-card-right">
+                        <div class="row no-gutters">
+                            <div class="col">
+                                <div class="">
+                                    <img src="@item.DiscTypeLogoLink" class="img-thumbnail" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row no-gutters">
+                            <div class="col-4">
+                                <div class="">
+                                    <button title="Add the date you last watched this" data-arg1="@item.PhysicalMediaId" data-arg2="@item.Title" class="btn btn-outline-light">
+                                        <i class="fa fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="">
+                                    <button title="Get more information" data-arg1="@item.MediaId" class="btn btn-outline-light">
+                                        <i class="fa fa-question"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="">
+                                    <button title="Delete from your list" data-arg1="@item.PhysicalMediaId" class="btn btn-danger">
+                                        <i class="fa fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="">
+                                    <button title="Edit" type="button" data-arg1="@item.MediaId" class="btn btn-outline-light">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -7,7 +7,7 @@ namespace SpinningFilm.Models
 {
     public class MediaFilter
     {
-        public string UserId { get; set; }
+        public Guid UserId { get; set; }
         public string MediaType { get; set; }
         public List<int> FilteredGenreId { get; set; } = new List<int>();
         public List<int> FilteredDiscTypeId { get; set; } = new List<int>();

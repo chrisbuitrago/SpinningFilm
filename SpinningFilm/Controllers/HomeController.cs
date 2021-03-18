@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using SpinningFilm.ApiModels;
 using Newtonsoft.Json;
 using SpinningFilm.Interfaces;
+using SpinningFilm.ViewModels;
 
 namespace SpinningFilm.Controllers
 {
@@ -50,11 +51,11 @@ namespace SpinningFilm.Controllers
 
             TmdbMovieResult result = JsonConvert.DeserializeObject<TmdbMovieResult>(responseBody);
 
-            foreach (var item in result.Genres)
-            {
-                item.MediaType = "tv";
-                _context.Add(item);
-            }
+            //foreach (var item in result.Genres)
+            //{
+            //    item.MediaType = "tv";
+            //    _context.Add(item);
+            //}
 
             _context.SaveChanges();
 

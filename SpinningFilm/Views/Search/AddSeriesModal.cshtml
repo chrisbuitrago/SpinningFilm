@@ -20,22 +20,22 @@
                 <b>Which seasons do you own?</b>
                 @for (int i = 0; i < Model.NumberOfSeasons; i++)
                 {
-                    @Html.HiddenFor(model => model.Seasons[i].SeriesSeasonId)
-                    @Html.HiddenFor(model => model.Seasons[i].SeasonNumber)
+                    @Html.HiddenFor(model => model.PhysicalMedias[i].PhysicalMediaId)
+                    @Html.HiddenFor(model => model.PhysicalMedias[i].AppUserId)
                     <div>
                         <div class="form-check">
                             <label class="form-check-label">
-                                <input class="form-check-input" name="SeasonNumbers" type="checkbox" value="@Model.Seasons[i].SeasonNumber" data-toggle="collapse" data-target="#options_@Model.Seasons[i].SeriesSeasonId"/>
+                                <input class="form-check-input" name="SeasonNumbers" type="checkbox" value="@Html.Raw(i+1)" data-toggle="collapse" data-target="#options_@Model.PhysicalMedias[i].PhysicalMediaId" />
                                 <span class="form-check-sign"></span>
-                                @Model.Seasons[i].SeasonNumber
+                                @Html.Raw(i + 1)
                             </label>
                         </div>
-                        <div id="options_@Model.Seasons[i].SeriesSeasonId" class="collapse" style="padding-bottom:1.4rem">
+                        <div id="options_@Model.PhysicalMedias[i].PhysicalMediaId" class="collapse" style="padding-bottom:1.4rem">
                             <div>
-                                What type of disc is this? @Html.DropDownListFor(model => model.Seasons[i].DiscTypeId, Model.DiscTypeList(), "", new { @class = "form-control required" })
+                                What type of disc is this? @Html.DropDownListFor(model => model.PhysicalMedias[i].DiscTypeId, Model.DiscTypeList(), "", new { @class = "form-control required" })
                             </div>
                             <div>
-                                Did this include a digital copy? @Html.DropDownListFor(model => model.Seasons[i].DigitalCopy, new List<SelectListItem> { new SelectListItem { Text = "Yes", Value = "True" }, new SelectListItem { Text = "No", Value = "False" } }, "", new { @class = "form-control required" })
+                                Did this include a digital copy? @Html.DropDownListFor(model => model.PhysicalMedias[i].DigitalCopy, new List<SelectListItem> { new SelectListItem { Text = "Yes", Value = "True" }, new SelectListItem { Text = "No", Value = "False" } }, "", new { @class = "form-control required" })
                             </div>
                         </div>
                     </div>

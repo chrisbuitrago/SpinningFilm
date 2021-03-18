@@ -17,21 +17,21 @@
                 @using (Html.BeginForm("EditMedia", "Media", FormMethod.Post, new { id = "editMediaForm" }))
                 {
                     @Html.AntiForgeryToken()
-                    @Html.HiddenFor(model => model.ImdbId)
+                    @Html.HiddenFor(model => model.PhysicalMediaId)
                     <div>
-                        What type of disc is this? @Html.DropDownList("DiscType", Model.DiscTypeList(), "", new { @class = "form-control required" })
+                        What type of disc is this? @Html.DropDownList("DiscTypeId", Model.DiscTypeList(), "", new { @class = "form-control required" })
                     </div>
                     <div>
                         Did this include a digital copy? @Html.DropDownList("DigitalCopy", new List<SelectListItem> { new SelectListItem { Text = "Yes", Value = "True" }, new SelectListItem { Text = "No", Value = "False" } }, "", new { @class = "form-control required" })
                     </div>
                     <div>
-                        Does this fall under any extra genres?
-                        <div>
-                            <input type="checkbox" name="extragenres" value="Halloween" @Html.Raw(Model.ExtraGenres.Contains("Halloween") ? "checked" : null) /> Halloween
-                        </div>
-                        <div>
-                            <input type="checkbox" name="extragenres" value="Christmas" @Html.Raw(Model.ExtraGenres.Contains("Christmas") ? "checked" : null) /> Christmas
-                        </div>
+                        Select any extra genres for this movie:
+                        @foreach (var item in Model.ExtraGenres)
+                        {
+                            <div>
+                                <input type="checkbox" name="extragenreids" value="@item.GenreId" @Html.Raw(Model.ExtraGenreIds.Contains(item.GenreId) ? "checked" : null)/> @item.Name
+                            </div>
+                        }
                     </div>
                     <div>
                         <input type="submit" value="Submit" class="btn btn-success" />

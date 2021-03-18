@@ -13,7 +13,7 @@ namespace SpinningFilm.Models
     {
         [Key]
         public Guid WatchedId { get; set; }
-        public string ImdbId { get; set; }
+        public Guid PhysicalMediaId { get; set; }
         public DateTime Date { get; set; }
         public Watched()
         {
@@ -22,7 +22,7 @@ namespace SpinningFilm.Models
         public Watched(WatchedViewModel watched)
         {
             WatchedId = Guid.NewGuid();
-            ImdbId = watched.ImdbId;
+            PhysicalMediaId = watched.PhysicalMediaId;
             Date = watched.Date;
         }
     }
